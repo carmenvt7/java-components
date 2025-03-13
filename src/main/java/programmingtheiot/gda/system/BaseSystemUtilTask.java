@@ -25,22 +25,31 @@ public abstract class BaseSystemUtilTask
 	
 	// private
 	
-	private String name   = ConfigConst.NOT_SET;
-	private int    typeID = ConfigConst.DEFAULT_TYPE_ID;
-	
+	private String name = ConfigConst.NOT_SET;
+	private int typeID = ConfigConst.DEFAULT_TYPE_ID;
+
 	// constructors
 	
 	public BaseSystemUtilTask(String name, int typeID)
 	{
 		super();
-	}
+		if (name != null) {
+			this.name = name;
+		}
+		this.typeID = typeID;
+}
 	
 	
 	// public methods
 	
 	public String getName()
 	{
-		return null;
+		return this.name;
+	}
+
+	public int getTypeID()
+	{
+		return this.typeID;
 	}
 	
 	/**
@@ -48,10 +57,7 @@ public abstract class BaseSystemUtilTask
 	 * 
 	 * @return int
 	 */
-	public int getTypeID()
-	{
-		return 0;
-	}
+
 	
 	/**
 	 * Template method definition. Sub-class will implement this to retrieve
@@ -59,6 +65,5 @@ public abstract class BaseSystemUtilTask
 	 * 
 	 * @return float
 	 */
-	public abstract float getTelemetryValue();
-	
+	public abstract float getTelemetryValue();	
 }
