@@ -42,9 +42,7 @@ public class SystemMemUtilTask extends BaseSystemUtilTask
 		MemoryUsage memUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 		double memUsed = (double) memUsage.getUsed();
 		double memMax  = (double) memUsage.getMax();
-
 		_Logger.fine("Mem used: " + memUsed + "; Mem Max: " + memMax);
-
 		double memUtil = (memUsed / memMax) * 100.0d;
 
 		return (float) memUtil;

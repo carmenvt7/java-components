@@ -32,7 +32,6 @@ import programmingtheiot.gda.connection.MqttClientConnector;
 import programmingtheiot.gda.connection.RedisPersistenceAdapter;
 import programmingtheiot.gda.connection.SmtpClientConnector;
 import programmingtheiot.gda.system.SystemPerformanceManager;
-import programmingtheiot.gda.system.SystemPerformanceManager;
 
 /**
  * Shell representation of class for student implementation.
@@ -176,15 +175,19 @@ public class DeviceDataManager implements IDataMessageListener
 	
 	public void startManager()
 	{
+		_Logger.info("Starting DeviceDataManager...");
 		if (this.sysPerfMgr != null) {
 			this.sysPerfMgr.startManager();
+			_Logger.info("SystemPerformanceManager started.");
 		}
 	}
 	
 	public void stopManager()
 	{
+		_Logger.info("Stopping DeviceDataManager...");
 		if (this.sysPerfMgr != null) {
 			this.sysPerfMgr.stopManager();
+			_Logger.info("SystemPerformanceManager stopped.");
 		}
 	}
 

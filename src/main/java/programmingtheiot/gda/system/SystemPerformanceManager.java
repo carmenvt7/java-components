@@ -34,6 +34,7 @@ public class SystemPerformanceManager
 	private ScheduledExecutorService schedExecSvc = null;
 	private SystemCpuUtilTask sysCpuUtilTask = null;
 	private SystemMemUtilTask sysMemUtilTask = null;
+	private SystemDiskUtilTask sysDiskUtilTask = null;
 
 	private Runnable taskRunner = null;
 	private boolean isStarted = false;
@@ -55,6 +56,7 @@ public class SystemPerformanceManager
 	this.schedExecSvc   = Executors.newScheduledThreadPool(1);
 	this.sysCpuUtilTask = new SystemCpuUtilTask();
 	this.sysMemUtilTask = new SystemMemUtilTask();
+	this.sysDiskUtilTask = new SystemDiskUtilTask();
 
 	this.taskRunner = () -> {
 		this.handleTelemetry();
@@ -70,6 +72,7 @@ public class SystemPerformanceManager
 	{
 		float cpuUtil = this.sysCpuUtilTask.getTelemetryValue();
 		float memUtil = this.sysMemUtilTask.getTelemetryValue();
+		float diskUtil = this.sysDiskUtilTask.getTelemetryValue();
 	
 		// NOTE: you may need to change the logging level to 'info' to see the message
 		_Logger.info("CPU utilization: " + cpuUtil + ", Mem utilization: " + memUtil);
@@ -78,6 +81,7 @@ public class SystemPerformanceManager
 		spd.setLocationID(this.locationID);
 		spd.setCpuUtilization(cpuUtil);
 		spd.setMemoryUtilization(memUtil);
+		spd.setDiskUtilization(diskUtil);
 
 		if (this.dataMsgListener != null) {
 		this.dataMsgListener.handleSystemPerformanceMessage(
