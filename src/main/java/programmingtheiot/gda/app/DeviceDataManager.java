@@ -171,26 +171,26 @@ public class DeviceDataManager implements IDataMessageListener
 	
 	public void setActuatorDataListener(String name, IActuatorDataListener listener)
 	{
+		if (listener !=null) {
+			// for now, just ignore 'name' - if you need more than one listener,
+			// you can use 'name' to create a map of listener instances
+			this.actuatorDataListener =listener;
+				}
 	}
 	
 	public void startManager()
 	{
-		_Logger.info("Starting DeviceDataManager...");
-		if (this.sysPerfMgr != null) {
-			this.sysPerfMgr.startManager();
-			_Logger.info("SystemPerformanceManager started.");
-		}
 		if (this.mqttClient != null) {
 			if (this.mqttClient.connectClient()) {
 				_Logger.info("Successfully connected MQTT client to broker.");
-	
+
 				// add necessary subscriptions
-	
+
 				// TODO: read this from the configuration file
 				int qos = ConfigConst.DEFAULT_QOS;
-	
+
 				// TODO: check the return value for each and take appropriate action
-	
+
 				// IMPORTANT NOTE: The 'subscribeToTopic()' method calls shown
 				// below will be moved to MqttClientConnector.connectComplete()
 				// in Lab Module 10. For now, they can remain here.
@@ -200,24 +200,35 @@ public class DeviceDataManager implements IDataMessageListener
 				this.mqttClient.subscribeToTopic(ResourceNameEnum.CDA_SYSTEM_PERF_MSG_RESOURCE, qos);
 			} else {
 				_Logger.severe("Failed to connect MQTT client to broker.");
-	
+
 				// TODO: take appropriate action
 			}
-		} 
+		}
+
+		if (this.sysPerfMgr != null) {
+			this.sysPerfMgr.startManager();
+		}	
+
+		if (this.enableCoapServer && this.coapServer != null) {
+			if (this.coapServer.startServer()) {
+				_Logger.info("CoAP server started.");
+			} else {
+				_Logger.severe("Failed to start CoAP server. Check log file for details.");
+			}
+		}
 	}
 	
 	public void stopManager()
 	{
-		_Logger.info("Stopping DeviceDataManager...");
 		if (this.sysPerfMgr != null) {
 			this.sysPerfMgr.stopManager();
-			_Logger.info("SystemPerformanceManager stopped.");
-		}
+	}
+
 		if (this.mqttClient != null) {
 			// add necessary un-subscribes
-	
+
 			// TODO: check the return value for each and take appropriate action
-	
+
 			// NOTE: The unsubscribeFromTopic() method calls below should match with
 			// the subscribeToTopic() method calls from startManager(). Also, the
 			// unsubscribe logic below can be moved to MqttClientConnector's
@@ -227,13 +238,21 @@ public class DeviceDataManager implements IDataMessageListener
 			this.mqttClient.unsubscribeFromTopic(ResourceNameEnum.CDA_ACTUATOR_RESPONSE_RESOURCE);
 			this.mqttClient.unsubscribeFromTopic(ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE);
 			this.mqttClient.unsubscribeFromTopic(ResourceNameEnum.CDA_SYSTEM_PERF_MSG_RESOURCE);
-	
+
 			if (this.mqttClient.disconnectClient()) {
 				_Logger.info("Successfully disconnected MQTT client from broker.");
 			} else {
 				_Logger.severe("Failed to disconnect MQTT client from broker.");
-	
+
 				// TODO: take appropriate action
+			}
+		}
+
+		if (this.enableCoapServer && this.coapServer != null) {
+			if (this.coapServer.stopServer()) {
+				_Logger.info("CoAP server stopped.");
+			} else {
+				_Logger.severe("Failed to stop CoAP server. Check log file for details.");
 			}
 		}
 	}
@@ -262,11 +281,15 @@ public class DeviceDataManager implements IDataMessageListener
 		}
 
 		if (this.enableMqttClient) {
-			// TODO: implement this in Lab Module 7
+			this.mqttClient = new MqttClientConnector();
+			// NOTE: The next line isn't technically needed until Lab Module 10
+			this.mqttClient.setDataMessageListener(this);
 		}
 
 		if (this.enableCoapServer) {
-			// TODO: implement this in Lab Module 8
+			if (this.enableCoapServer) {
+			this.coapServer = new CoapServerGateway(this);
+		}
 		}
 
 		if (this.enableCloudClient) {
@@ -277,6 +300,18 @@ public class DeviceDataManager implements IDataMessageListener
 			// TODO: implement this as an optional exercise in Lab Module 5
 		}
 	
+	}
+	private void handleIncomingDataAnalysis(ResourceNameEnum resourceName, ActuatorData data)
+	{
+		_Logger.info("Analyzing incoming actuator data: " +data.getName());
+
+		if (data.isResponseFlagEnabled()) {
+		// TODO: implement this
+			}else {
+		if (this.actuatorDataListener !=null) {
+		this.actuatorDataListener.onActuatorDataUpdate(data);
+				}
+		}
 	}
 
 
