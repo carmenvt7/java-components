@@ -48,7 +48,7 @@ defaultQoS     = 0
 keepAlive      = 60
 enableAuth     = False
 enableCrypt    = False
-useAsyncClient = False
+useAsyncClient = True
 
 #
 # CoAP client and server configuration information
@@ -71,7 +71,7 @@ deviceLocationID        = gatewaydevice001
 enableLogging           = True
 pollCycleSecs           = 60
 enableMqttClient        = False
-enableCoapServer        = True
+enableCoapServer        = False
 enableCoapClient        = False
 enableCloudClient       = False
 enableSmtpClient        = False
@@ -80,3 +80,8 @@ enableSystemPerformance = False
 testGdaDataPath         = /tmp/gda-data
 testCdaDataPath         = /tmp/cda-data
 testEmptyApp            = False
+handleHumidityChangeOnDevice = True
+humidityMaxTimePastThreshold = 300Add commentMore actions
+nominalHumiditySetting       = 40.0
+triggerHumidifierFloor       = 30.0
+triggerHumidifierCeiling     = 50.0
